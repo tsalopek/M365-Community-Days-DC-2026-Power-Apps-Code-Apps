@@ -1,20 +1,21 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
+        "target": "ES2020",
         "lib": [
+            "ES2020",
             "dom",
-            "dom.iterable",
-            "esnext"
+            "dom.iterable"
         ],
-        "jsx": "preserve",
-        "module": "esnext",
+        "module": "ESNext",
         "moduleResolution": "bundler",
+        "jsx": "react-jsx",
         "allowJs": true,
         "skipLibCheck": true,
         "strict": true,
         "noEmit": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
+        "allowImportingTsExtensions": true,
         "isolatedModules": true,
         "incremental": true,
         "forceConsistentCasingInFileNames": true,
@@ -23,18 +24,11 @@
             "@/*": [
                 "./src/*"
             ]
-        },
-        "plugins": [
-            {
-                "name": "next"
-            }
-        ]
+        }
     },
     "include": [
-        "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        ".next/types/**/*.ts"
+        "src",
+        "vite-env.d.ts"
     ],
     "exclude": [
         "node_modules"

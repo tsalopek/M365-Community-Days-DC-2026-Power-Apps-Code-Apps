@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState } from 'react';
 import { eventConfig } from '@/config/eventConfig';
 import { Countdown } from './Countdown';

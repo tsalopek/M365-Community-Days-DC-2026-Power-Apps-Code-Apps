@@ -1,44 +1,52 @@
 # M365 Community Days DC 2026 Event Website
 
-A modern event website built with Next.js for M365 Community Days DC 2026 (January 29-30). Features event details, session listings with live filtering, sponsor information, and countdown timer.
+A modern event website built with **Vite** and **React 18** for M365 Community Days DC 2026 (January 29-30). Features event details, session listings with live filtering, sponsor information, and countdown timer.
 
 ## 🎯 Project Overview
 
-This is a static event site demonstrating:
-- **Next.js 14** for fast, server-rendered React components
+This is a client-side React SPA with the following characteristics:
+- **Vite** for lightning-fast development and optimized builds
+- **React 18** for fast, reactive UI components
 - **Client-side filtering** for dynamic session views by track
-- **Configuration-driven content** (single source of truth for all event data)
+- **SharePoint REST API integration** for sessions, speakers, and sponsors
+- **Client-side authentication** via access tokens (development mode)
 - **CSS Modules** for scoped, maintainable styling
 - **TypeScript strict mode** for type safety
 
-All content is managed through a single configuration file—no backend API required.
+Sessions, speakers, and sponsors are fetched from SharePoint and cached in component state.
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app/              # Next.js app directory
-│   ├── layout.tsx    # Root HTML layout with metadata
-│   ├── page.tsx      # Main page entry point
+├── main.tsx                # Vite entry point
+├── App.tsx                 # Main app component
+├── app/
+│   ├── globals.css         # Global styles
 │   ├── page.module.css
-│   └── globals.css   # Global styles
-├── components/       # React components (each with paired .module.css)
+│   └── ...
+├── components/             # React components (each with paired .module.css)
 │   ├── Header.tsx
 │   ├── HeroImage.tsx
 │   ├── Hero.tsx
-│   ├── SessionsList.tsx  # Client component with filtering
+│   ├── SessionsList.tsx    # Client component with filtering
 │   ├── Details.tsx
 │   ├── Sponsors.tsx
 │   ├── Footer.tsx
 │   └── Countdown.tsx
-└── config/
-    └── eventConfig.ts    # Single source of truth for all event data
+├── config/
+│   └── eventConfig.ts      # Event metadata & SharePoint URLs
+├── services/
+│   └── authService.ts      # SharePoint access token management
+├── hooks/
+│   └── useAuth.ts          # Custom auth hook
+└── vite-env.d.ts           # Vite environment variable types
 ```
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 16+ and npm
+- Node.js 16+ and npm (or yarn/pnpm)
 
 ### Installation
 ```bash
@@ -46,63 +54,43 @@ npm install
 ```
 
 ### Environment Setup
-This project requires Azure AD authentication to access SharePoint sessions.
 
 1. **Copy the environment template:**
    ```bash
    cp .env.local.example .env.local
    ```
 
-2. **Register an Azure AD Application:**
+2. **Update SharePoint URLs** (if needed):
+   - Edit `.env.local` to add your SharePoint list REST API URLs
+   - Format: `https://{tenant}.sharepoint.com/sites/{site}/_api/web/lists/GetByTitle('{list-name}')/items`
+
+3. **For Production: Set up OAuth 2.0 with Azure AD**
    - Go to [Azure Portal](https://portal.azure.com)
    - Navigate to **Azure Active Directory > App registrations > New registration**
-   - Name: "M365 Community Days DC 2026"
-   - Leave defaults and click **Register**
+   - Name: "M365 Community Days DC"
+   - Configure **Implicit grant** or use **Authorization Code Flow with PKCE** for SPA
+   - Add Redirect URI: `http://localhost:5173` (for dev), or your production URL
 
-3. **Add Redirect URI (critical for fixing AADSTS500113 error):**
-   - In your app registration, go to **Authentication** (left sidebar)
-   - Under "Platform configurations", click **Add a platform**
-   - Select **Web**
-   - Redirect URIs: `http://localhost:3000/api/auth/callback/azure-ad`
-   - Click **Configure**
-
-4. **Get credentials:**
-   - Go to **Overview** tab → Copy **Application (client) ID** → Paste to `AZURE_AD_CLIENT_ID` in `.env.local`
-   - Go to **Certificates & secrets** → **New client secret** → Copy the secret value → Paste to `AZURE_AD_CLIENT_SECRET`
-   - Go back to **Overview** → Copy **Tenant ID** → Paste to `AZURE_AD_TENANT_ID`
-
-5. **Generate NextAuth secret:**
-   ```bash
-   openssl rand -base64 32
-   ```
-   Copy output to `NEXTAUTH_SECRET` in `.env.local`
-
-**Your `.env.local` should look like:**
-```env
-NEXTAUTH_SECRET=<generated-secret>
-NEXTAUTH_URL=http://localhost:3000
-AZURE_AD_CLIENT_ID=<your-client-id>
-AZURE_AD_CLIENT_SECRET=<your-client-secret>
-AZURE_AD_TENANT_ID=<your-tenant-id>
-```
-
-**Common Issues:**
-- **Error: "No reply address is registered"** → You skipped step 3. Make sure to add the redirect URI in the **Authentication** section of your app registration.
-- **Error: "Invalid client secret"** → Copy the secret value (not the secret ID) from Azure AD.
-- **Sessions not loading after sign-in** → Verify your Azure AD tenant has access to the SharePoint site.
-
-**Security Note:** `.env.local` is in `.gitignore` and will never be committed to the repository. Always use `.env.local.example` as a template and keep actual secrets secure.
+4. **For Development: Manual Token Approach**
+   - Obtain an access token from Azure AD (via Azure Portal, PowerShell, or MSAL)
+   - Paste it into the login prompt on the SessionsList section
+   - Note: This is a simplified approach for development only
 
 ### Development
 ```bash
 npm run dev
 ```
-Opens at [http://localhost:3000](http://localhost:3000) with hot reload enabled.
+Opens at [http://localhost:5173](http://localhost:5173) with Vite's hot reload enabled (HMR).
 
 ### Production Build
 ```bash
 npm run build
-npm run start
+```
+Outputs optimized bundle to `dist/` directory.
+
+### Preview Built Site
+```bash
+npm run preview
 ```
 
 ### Linting
@@ -126,12 +114,12 @@ npm run lint
 Add a new item to the SharePoint list: [M365 Community Days DC 2026 Sessions](https://andworx.sharepoint.com/sites/M365CommunityDaysDC2026/Lists/M365%20Community%20Days%20DC%202026%20Sessions)
 
 Required columns:
-- **Title**: Session title
-- **Speaker**: Speaker name
-- **Description**: Session description
-- **TimeSlot**: Format "HH:MM AM/PM - HH:MM AM/PM" (e.g., "9:00 AM - 9:30 AM")
-- **Room**: Room/location name
-- **Track**: Track category (automatically creates filter buttons)
+- **field_1** (Title): Session title
+- **field_2** (Speaker): Speaker name
+- **field_3** (Description): Session description
+- **field_4** (TimeSlot): Format "HH:MM AM/PM - HH:MM AM/PM" (e.g., "9:00 AM - 9:30 AM")
+- **field_5** (Room): Room/location name
+- **field_6** (Track): Track category (automatically creates filter buttons)
 
 The site fetches sessions from SharePoint on load and automatically generates filter buttons based on track categories—no code changes needed.
 
@@ -141,19 +129,19 @@ Modify properties in `eventConfig.event` (dates, location, description, ticket U
 ### Adding a New Section
 1. Create `src/components/YourSection.tsx` and `YourSection.module.css`
 2. Export as: `export const YourSection: React.FC = () => { ... }`
-3. Import and add to the render sequence in `src/app/page.tsx`
+3. Import and add to the render sequence in `src/App.tsx`
 
 ## 🛠️ Development Patterns
 
-### Client vs Server Components
-- **Server Components** (default): Static content like Header, Hero, Footer
-- **Client Components**: Add `'use client';` at the top (e.g., SessionsList uses `useState` for filtering)
+### Authentication & API Calls
+- **`authService.ts`**: Manages access token lifecycle (store, retrieve, validate, refresh)
+- **`useAuth()`**: Custom hook for authentication state (isAuthenticated, isLoading, error)
+- **Client-side fetching**: Components use `authService.fetchSharePointList()` to retrieve data
 
-### Imports
-Use path aliases (`@/`) for clean imports:
+Example usage in SessionsList.tsx:
 ```typescript
-import { eventConfig } from '@/config/eventConfig';
-import { SessionsList } from '@/components/SessionsList';
+const { isAuthenticated } = useAuth()
+const data = await authService.fetchSharePointList(eventConfig.sharePointSessionsUrl)
 ```
 
 ### Styling
@@ -163,13 +151,37 @@ import styles from './Component.module.css';
 <button className={styles.buttonClass}>Click me</button>
 ```
 
+Conditional classes:
+```tsx
+<div className={`${styles.active} ${isSelected ? styles.highlighted : ''}`}>
+```
+
+### Environment Variables
+Vite prefixes environment variables with `VITE_`:
+```typescript
+const url = import.meta.env.VITE_SHAREPOINT_SESSIONS_URL
+```
+
+All `VITE_*` variables in `.env.local` are available at runtime.
+
 ## 🔧 Technology Stack
 
-- **Framework**: Next.js 14
-- **UI Library**: React 18
+- **Framework**: Vite 5 + React 18
 - **Language**: TypeScript 5.3+ (strict mode)
 - **Styling**: CSS Modules
-- **Build Tool**: Next.js built-in (Webpack)
+- **Build Tool**: Vite (Rollup-based)
+- **Package Manager**: npm
+
+## 📝 Migration from Next.js
+
+If updating from the Next.js version:
+
+1. **Entry point**: Changed from `src/app/page.tsx` to `src/main.tsx` → `src/App.tsx`
+2. **Authentication**: Removed NextAuth.js → Custom client-side auth service
+3. **API routes**: Removed `/api/*` routes → Direct SharePoint REST calls from components
+4. **Environment variables**: Changed from `process.env.*` to `import.meta.env.VITE_*`
+5. **Development port**: Changed from 3000 to 5173
+6. **Build output**: Changed from `.next/` to `dist/`
 
 ## 📝 License
 

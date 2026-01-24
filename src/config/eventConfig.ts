@@ -42,7 +42,7 @@ export const eventConfig = {
         instagram: "https://instagram.com/m365dc",
         twitter: "https://x.com/search?q=%23M365Community"
     },
-    sharePointSessionsUrl: process.env.SHAREPOINT_SESSIONS_URL,
-    sharePointSpeakersUrl: process.env.SHAREPOINT_SPEAKERS_URL,
-    sharePointSponsorsUrl: process.env.SHAREPOINT_SPONSORS_URL,
+    sharePointSessionsUrl: import.meta.env.VITE_SHAREPOINT_SESSIONS_URL,
+    sharePointSpeakersUrl: import.meta.env.VITE_SHAREPOINT_SPEAKERS_URL,
+    sharePointSponsorsUrl: import.meta.env.VITE_SHAREPOINT_SPONSORS_URL,
 };

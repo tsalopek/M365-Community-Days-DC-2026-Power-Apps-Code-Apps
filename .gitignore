@@ -5,10 +5,10 @@ yarn-debug.log
 yarn-error.log
 pnpm-debug.log
 
-# Next.js build and cache
-.next/
-out/
-build/
+# Vite build and cache
+dist/
+dist-ssr/
+*.local
 
 # Environment variables
 .env.local
@@ -37,5 +37,5 @@ Thumbs.db
 coverage/
 .nyc_output/
 
-# Production
-dist/
+# Build outputs
+.cache/

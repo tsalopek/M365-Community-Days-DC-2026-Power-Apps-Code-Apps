@@ -1,8 +1,8 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
-import styles from './Sponsors.module.css';
+import React, { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { authService } from '@/services/msal'
+import { eventConfig } from '@/config/eventConfig'
+import styles from './Sponsors.module.css'
 
 interface Sponsor {
     id: number;
@@ -12,30 +12,29 @@ interface Sponsor {
 }
 
 export const Sponsors: React.FC = () => {
-    const { data: session, status } = useSession();
-    const [sponsors, setSponsors] = useState<Sponsor[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { isAuthenticated } = useAuth()
+    const [sponsors, setSponsors] = useState<Sponsor[]>([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        if (status !== 'authenticated') {
-            setLoading(false);
-            return;
+        if (!isAuthenticated) {
+            setSponsors([])
+            setError(null)
+            return
         }
 
         const fetchSponsors = async () => {
             try {
-                setLoading(true);
-                setError(null);
+                setLoading(true)
+                setError(null)
 
-                const response = await fetch('/api/sponsors');
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.error || `Failed to fetch sponsors: ${response.statusText}`);
+                const listUrl = eventConfig.sharePointSponsorsUrl
+                if (!listUrl) {
+                    throw new Error('SharePoint sponsors URL is not configured.')
                 }
 
-                const data = await response.json();
+                const data = await authService.fetchSharePointList(listUrl)
 
                 // Map SharePoint list items to Sponsor interface
                 const mappedSponsors: Sponsor[] = data.value.map(
@@ -45,56 +44,37 @@ export const Sponsors: React.FC = () => {
                         url: item.field_2 || '',
                         tier: item.field_3 || 'Web',
                     })
-                );
+                )
 
-                setSponsors(mappedSponsors);
+                setSponsors(mappedSponsors)
             } catch (err) {
-                setError(
-                    err instanceof Error
-                        ? err.message
-                        : 'Failed to load sponsors from SharePoint'
-                );
-                console.error('Error fetching sponsors:', err);
+                const message = err instanceof Error ? err.message : 'Failed to fetch sponsors'
+                setError(message)
+                console.error('Error fetching sponsors:', err)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
+        }
 
-        fetchSponsors();
-    }, [status]);
+        fetchSponsors()
+    }, [isAuthenticated])
 
-    const platinumSponsors = sponsors.filter(s => s.tier === 'Platinum');
-    const goldSponsors = sponsors.filter(s => s.tier === 'Gold');
-    const webSponsors = sponsors.filter(s => s.tier === 'Web');
+    const platinumSponsors = sponsors.filter((s) => s.tier === 'Platinum')
+    const goldSponsors = sponsors.filter((s) => s.tier === 'Gold')
+    const webSponsors = sponsors.filter((s) => s.tier === 'Web')
 
     return (
         <section className={styles.section} id="sponsors">
             <div className={styles.container}>
                 <h2>Sponsors</h2>
 
-                {status === 'unauthenticated' && (
+                {!isAuthenticated && (
                     <div style={{ textAlign: 'center', padding: '2rem' }}>
                         <p>Sign in with your Microsoft account to view sponsors.</p>
-                        <button
-                            onClick={() => signIn('azure-ad')}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                fontSize: '1rem',
-                                backgroundColor: '#0078d4',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            Sign in with Microsoft
-                        </button>
                     </div>
                 )}
 
-                {status === 'loading' && <p>Loading...</p>}
-
-                {status === 'authenticated' && (
+                {isAuthenticated && (
                     <>
                         {loading && <p>Loading sponsors...</p>}
                         {error && <p style={{ color: 'orange' }}>⚠️ {error}</p>}
@@ -163,5 +143,5 @@ export const Sponsors: React.FC = () => {
                 )}
             </div>
         </section>
-    );
-};
+    )
+}
