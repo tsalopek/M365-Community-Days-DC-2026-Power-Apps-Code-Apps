@@ -1,0 +1,111 @@
+.section {
+    padding: 4rem 2rem;
+    background: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section h2 {
+    font-size: 2.8rem;
+    color: #1f2937;
+    margin: 0 0 2.5rem;
+    text-align: center;
+    font-weight: 800;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 3.5rem;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 2.25rem;
+    transition: all 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+    font-size: 1.4rem;
+    margin: 0 0 1.25rem;
+    color: #1f2937;
+    font-weight: 700;
+}
+
+.card p {
+    margin: 0.75rem 0;
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.cardTitle {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.15rem;
+}
+
+.charity {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 100%);
+    border-left: 4px solid #7c3aed;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.charity h3 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    color: #1f2937;
+    font-weight: 700;
+}
+
+.charityName {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #7c3aed;
+    margin: 0 0 0.75rem;
+}
+
+.charity p {
+    color: #4b5563;
+    line-height: 1.7;
+    margin: 0.75rem 0;
+}
+
+.charity a {
+    display: inline-block;
+    color: #7c3aed;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: all 0.3s;
+}
+
+.charity a:hover {
+    color: #6d28d9;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .section h2 {
+        font-size: 1.8rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charity {
+        padding: 1.5rem;
+    }
+}

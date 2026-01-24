@@ -1,0 +1,130 @@
+.section {
+    padding: 4rem 2rem;
+    background: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section h2 {
+    font-size: 2.8rem;
+    color: #1f2937;
+    margin: 0 0 2.5rem;
+    text-align: center;
+    font-weight: 800;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 0.6rem 1.5rem;
+    border: 2px solid #7c3aed;
+    background: white;
+    color: #7c3aed;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.filterBtn:hover {
+    background: #f8f6ff;
+}
+
+.filterBtn.active {
+    background: #7c3aed;
+    color: white;
+    border-color: #7c3aed;
+}
+
+.sessionGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.sessionCard {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.75rem;
+    background: #ffffff;
+    transition: all 0.3s;
+}
+
+.sessionCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #d1d5db;
+}
+
+.sessionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.sessionHeader h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #1f2937;
+    flex: 1;
+    font-weight: 700;
+}
+
+.track {
+    display: inline-block;
+    background: #7c3aed;
+    color: white;
+    padding: 0.35rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.speaker {
+    color: #374151;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+}
+
+.description {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem;
+}
+
+.sessionMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.time,
+.room {
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .section h2 {
+        font-size: 1.8rem;
+    }
+
+    .sessionGrid {
+        grid-template-columns: 1fr;
+    }
+}
