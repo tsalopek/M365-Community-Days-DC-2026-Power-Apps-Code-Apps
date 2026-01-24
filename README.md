@@ -45,6 +45,54 @@ src/
 npm install
 ```
 
+### Environment Setup
+This project requires Azure AD authentication to access SharePoint sessions.
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+2. **Register an Azure AD Application:**
+   - Go to [Azure Portal](https://portal.azure.com)
+   - Navigate to **Azure Active Directory > App registrations > New registration**
+   - Name: "M365 Community Days DC 2026"
+   - Leave defaults and click **Register**
+
+3. **Add Redirect URI (critical for fixing AADSTS500113 error):**
+   - In your app registration, go to **Authentication** (left sidebar)
+   - Under "Platform configurations", click **Add a platform**
+   - Select **Web**
+   - Redirect URIs: `http://localhost:3000/api/auth/callback/azure-ad`
+   - Click **Configure**
+
+4. **Get credentials:**
+   - Go to **Overview** tab → Copy **Application (client) ID** → Paste to `AZURE_AD_CLIENT_ID` in `.env.local`
+   - Go to **Certificates & secrets** → **New client secret** → Copy the secret value → Paste to `AZURE_AD_CLIENT_SECRET`
+   - Go back to **Overview** → Copy **Tenant ID** → Paste to `AZURE_AD_TENANT_ID`
+
+5. **Generate NextAuth secret:**
+   ```bash
+   openssl rand -base64 32
+   ```
+   Copy output to `NEXTAUTH_SECRET` in `.env.local`
+
+**Your `.env.local` should look like:**
+```env
+NEXTAUTH_SECRET=<generated-secret>
+NEXTAUTH_URL=http://localhost:3000
+AZURE_AD_CLIENT_ID=<your-client-id>
+AZURE_AD_CLIENT_SECRET=<your-client-secret>
+AZURE_AD_TENANT_ID=<your-tenant-id>
+```
+
+**Common Issues:**
+- **Error: "No reply address is registered"** → You skipped step 3. Make sure to add the redirect URI in the **Authentication** section of your app registration.
+- **Error: "Invalid client secret"** → Copy the secret value (not the secret ID) from Azure AD.
+- **Sessions not loading after sign-in** → Verify your Azure AD tenant has access to the SharePoint site.
+
+**Security Note:** `.env.local` is in `.gitignore` and will never be committed to the repository. Always use `.env.local.example` as a template and keep actual secrets secure.
+
 ### Development
 ```bash
 npm run dev
@@ -75,24 +123,20 @@ npm run lint
 ## 🎓 Content Management
 
 ### Adding a Session
-Edit `src/config/eventConfig.ts` and append to the `sessions` array:
+Add a new item to the SharePoint list: [M365 Community Days DC 2026 Sessions](https://andworx.sharepoint.com/sites/M365CommunityDaysDC2026/Lists/M365%20Community%20Days%20DC%202026%20Sessions)
 
-```typescript
-{
-    id: 99,
-    title: "Your Session Title",
-    speaker: "Speaker Name",
-    description: "Session description...",
-    timeSlot: "2:00 PM - 2:45 PM",
-    room: "Room Name",
-    track: "Track Name"  // Auto-creates filter button
-}
-```
+Required columns:
+- **Title**: Session title
+- **Speaker**: Speaker name
+- **Description**: Session description
+- **TimeSlot**: Format "HH:MM AM/PM - HH:MM AM/PM" (e.g., "9:00 AM - 9:30 AM")
+- **Room**: Room/location name
+- **Track**: Track category (automatically creates filter buttons)
 
-Track names automatically generate filter buttons in the Sessions section—no code changes needed.
+The site fetches sessions from SharePoint on load and automatically generates filter buttons based on track categories—no code changes needed.
 
 ### Updating Event Info
-Modify properties in `eventConfig.event` (dates, location, description, ticket URL, etc.). All components consuming this data auto-update via React's reactivity.
+Modify properties in `eventConfig.event` (dates, location, description, ticket URL, etc.) in `src/config/eventConfig.ts`. All components consuming this data auto-update via React's reactivity.
 
 ### Adding a New Section
 1. Create `src/components/YourSection.tsx` and `YourSection.module.css`

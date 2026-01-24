@@ -12,11 +12,14 @@ Home → Header → HeroImage → Hero → SessionsList → Details → Sponsors
 ```
 
 ### Configuration Pattern
-All dynamic content lives in [src/config/eventConfig.ts](src/config/eventConfig.ts) (571 lines). Two key objects:
+Event metadata lives in [src/config/eventConfig.ts](src/config/eventConfig.ts) (571 lines):
 - `eventConfig.event`: Metadata (dates, location, description, ticket URL, charity partner)
-- `eventConfig.sessions`: Array of session objects (id, title, speaker, description, timeSlot, room, track)
 
-Components **import and consume** this config directly—no backend API calls. To add sessions/events: modify this file only.
+Sessions are **fetched dynamically** from a SharePoint list:
+- REST endpoint: `https://andworx.sharepoint.com/sites/M365CommunityDaysDC2026/_api/web/lists/GetByTitle('M365 Community Days DC 2026 Sessions')/items`
+- [SessionsList.tsx](src/components/SessionsList.tsx) fetches on mount via `useEffect`
+- Maps SharePoint columns (Title, Speaker, Description, TimeSlot, Room, Track) to Session interface
+- Handles loading/error states gracefully
 
 ### Component Conventions
 - Location: [src/components/](src/components/) - each component paired with `.module.css`
@@ -28,10 +31,12 @@ Components **import and consume** this config directly—no backend API calls. T
 ## Key Patterns
 
 ### Filtering & State
-[SessionsList.tsx](src/components/SessionsList.tsx) exemplifies client-side filtering:
+[SessionsList.tsx](src/components/SessionsList.tsx) exemplifies data fetching and client-side filtering:
+- `useEffect` hook fetches sessions from SharePoint on component mount
+- `useState<Session[]>(sessions)` stores fetched data
 - `useState<string | null>(selectedTrack)` tracks active filter
-- Derives unique tracks: `[...new Set(eventConfig.sessions.map(s => s.track))]`
-- Renders conditional UI: `selectedTrack ? filter : all`
+- Derives unique tracks: `[...new Set(sessions.map(s => s.track))]`
+- Renders conditional UI with loading/error states
 - CSS toggle: `${styles.active}` class for visual state
 
 ### Styling
@@ -57,19 +62,17 @@ npm run lint     # Next.js ESLint
 ## Common Tasks
 
 ### Adding a Session
-Edit [eventConfig.ts](src/config/eventConfig.ts), append to `sessions` array:
-```typescript
-{
-    id: 99,
-    title: "Session Title",
-    speaker: "Name",
-    description: "...",
-    timeSlot: "HH:MM AM/PM - HH:MM AM/PM",
-    room: "Room Name",
-    track: "Track Name"  // Creates filter button automatically
-}
-```
-SessionsList auto-derives tracks and updates filter buttons—no component changes needed.
+Add a new item to the SharePoint list at: https://andworx.sharepoint.com/sites/M365CommunityDaysDC2026/Lists/M365%20Community%20Days%20DC%202026%20Sessions
+
+Required columns:
+- **Title**: Session title
+- **Speaker**: Speaker name
+- **Description**: Session description
+- **TimeSlot**: Format "HH:MM AM/PM - HH:MM AM/PM" (e.g., "9:00 AM - 9:30 AM")
+- **Room**: Room/location name
+- **Track**: Track category (creates filter button automatically)
+
+SessionsList auto-fetches on page load and derives tracks for filter buttons—no code changes needed.
 
 ### Updating Event Metadata
 Modify properties under `eventConfig.event` in [eventConfig.ts](src/config/eventConfig.ts). Components consuming these (Hero, Details) auto-reflect changes via re-renders.
@@ -81,7 +84,11 @@ Modify properties under `eventConfig.event` in [eventConfig.ts](src/config/event
 4. Use path alias imports: `import { eventConfig } from '@/config/eventConfig'`
 
 ## Important Notes
-- No backend/API—purely static Next.js with client-side state
+- Sessions are fetched from SharePoint REST API via [src/app/api/sessions/route.ts](src/app/api/sessions/route.ts) (proxied server-side to avoid CORS)
+- **Fallback to hardcoded config**: If SharePoint is unavailable or returns 401/403, sessions default to [eventConfig.ts](src/config/eventConfig.ts)
+- Event metadata remains static in eventConfig.ts
+- Client component (SessionsList) handles loading states gracefully
+- No backend authentication—purely static Next.js with dynamic data fetching
 - Event config changes don't require rebuilds for dev; hot reload via Next.js HMR
 - All components are React 18 functional components; no class components
 - Avoid direct DOM manipulation—use React state/props patterns
