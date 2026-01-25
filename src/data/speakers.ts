@@ -22,3 +22,7 @@ export const speakers: StaticSpeaker[] = [
     { id: '9', name: 'Mitch Salopek', title: 'Power Apps Expert', bio: 'Microsoft MVP specializing in Power Apps Code-First development', sessions: '9,32' },
     { id: '10', name: 'Susan Hanley', title: 'Digital Workplace & Governance Expert', bio: 'Expert in intranet governance and Microsoft Viva', sessions: '10' },
 ]
+
+// NOTE: This file contains reference data for speakers but is currently NOT used in the application.
+// Sessions (including speaker names) are fetched from SharePoint REST API.
+// Keep this file for reference or future use.

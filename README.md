@@ -8,12 +8,12 @@ This is a client-side React SPA with the following characteristics:
 - **Vite** for lightning-fast development and optimized builds
 - **React 18** for fast, reactive UI components
 - **Client-side filtering** for dynamic session views by track
-- **SharePoint REST API integration** for sessions, speakers, and sponsors
-- **Client-side authentication** via access tokens (development mode)
+- **SharePoint REST API integration** for dynamic sessions data
+- **Azure AD authentication** via MSAL (OAuth 2.0 with popup flow)
 - **CSS Modules** for scoped, maintainable styling
 - **TypeScript strict mode** for type safety
 
-Sessions, speakers, and sponsors are fetched from SharePoint and cached in component state.
+Sessions are fetched from SharePoint after authentication. Sponsors use static data.
 
 ## 📁 Project Structure
 
@@ -21,10 +21,7 @@ Sessions, speakers, and sponsors are fetched from SharePoint and cached in compo
 src/
 ├── main.tsx                # Vite entry point
 ├── App.tsx                 # Main app component
-├── app/
-│   ├── globals.css         # Global styles
-│   ├── page.module.css
-│   └── ...
+├── globals.css             # Global styles
 ├── components/             # React components (each with paired .module.css)
 │   ├── Header.tsx
 │   ├── HeroImage.tsx

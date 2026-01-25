@@ -22,10 +22,13 @@ npm run lint     # Run ESLint
 - `src/services/authService.ts` - Token management
 - `src/hooks/useAuth.ts` - Auth state hook
 
-## Authentication (Dev Mode)
-1. Open SessionsList section (requires auth)
-2. Paste valid SharePoint access token into login prompt
-3. Press Enter to authenticate
+## Authentication
+1. Click "Sign in with Microsoft" button in Sessions section
+2. MSAL popup opens for Azure AD authentication
+3. Sign in with your Microsoft account
+4. Sessions are automatically fetched from SharePoint after successful auth
+
+**Note**: Requires Azure AD app registration configured in `.env.local`
 
 ## Environment Variables
 ```env

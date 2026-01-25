@@ -43,6 +43,4 @@ export const eventConfig = {
         twitter: "https://x.com/search?q=%23M365Community"
     },
     sharePointSessionsUrl: import.meta.env.VITE_SHAREPOINT_SESSIONS_URL,
-    sharePointSpeakersUrl: import.meta.env.VITE_SHAREPOINT_SPEAKERS_URL,
-    sharePointSponsorsUrl: import.meta.env.VITE_SHAREPOINT_SPONSORS_URL,
 };
