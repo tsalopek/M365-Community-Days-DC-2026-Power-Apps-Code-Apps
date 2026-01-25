@@ -2,6 +2,14 @@
 
 A modern event website built with **Vite** and **React 18** for M365 Community Days DC 2026 (January 29-30). Features event details, session listings with live filtering, sponsor information, and countdown timer.
 
+## 📌 Branch Information
+
+**Current Branch: `sharePoint-datasource-demo-start`**
+
+This branch represents the beginning of the M365 Community Days DC demonstration. At this point, we have a functional website that connects to SharePoint as a data source using Azure AD authentication and MSAL. Sessions are dynamically fetched from SharePoint REST API.
+
+**Note**: This branch cannot yet be deployed to Power Apps. The demonstration will progress through additional branches showing the migration path to Power Apps deployment.
+
 ## 🎯 Project Overview
 
 This is a client-side React SPA with the following characteristics:
