@@ -111,23 +111,6 @@ export const SessionsList: React.FC = () => {
 
                 {isAuthenticated && (
                     <>
-                        <div style={{ marginBottom: '1rem', textAlign: 'right' }}>
-                            <button
-                                onClick={logout}
-                                style={{
-                                    padding: '0.5rem 1rem',
-                                    fontSize: '0.9rem',
-                                    backgroundColor: '#f3f2f1',
-                                    color: '#323130',
-                                    border: '1px solid #d0d0d0',
-                                    borderRadius: '2px',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Sign out
-                            </button>
-                        </div>
-
                         {loading && <p>Loading sessions...</p>}
                         {error && <p style={{ color: 'orange' }}>⚠️ {error}</p>}
 

@@ -69,18 +69,13 @@ npm install
    - Navigate to **Azure Active Directory > App registrations > New registration**
    - Name: "M365 Community Days DC"
    - Configure **Implicit grant** or use **Authorization Code Flow with PKCE** for SPA
-   - Add Redirect URI: `http://localhost:5173` (for dev), or your production URL
-
-4. **For Development: Manual Token Approach**
-   - Obtain an access token from Azure AD (via Azure Portal, PowerShell, or MSAL)
-   - Paste it into the login prompt on the SessionsList section
-   - Note: This is a simplified approach for development only
+   - Add Redirect URI: `http://localhost:3000` (for dev), or your production URL
 
 ### Development
 ```bash
 npm run dev
 ```
-Opens at [http://localhost:5173](http://localhost:5173) with Vite's hot reload enabled (HMR).
+Opens at [http://localhost:3000](http://localhost:3000) with Vite's hot reload enabled (HMR).
 
 ### Production Build
 ```bash
