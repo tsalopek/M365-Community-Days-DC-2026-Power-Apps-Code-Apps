@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { eventConfig } from '@/config/eventConfig'
 import styles from './SessionsList.module.css'
-import { Cr552_m365communitydayssessionsesService } from '@/generated/services/Cr552_m365communitydayssessionsesService';
+import { Cr552_m365communitydayssessionsesService, Cr552_m365communitydayssessionsesModel } from '@/generated';
 
 interface Session {
     id: string;
@@ -27,39 +27,13 @@ export const SessionsList: React.FC = () => {
                 setLoading(true)
                 setError(null)
 
-                // Fetch sessions using the Cr552_m365communitydayssessionsesService
-                const result = await Cr552_m365communitydayssessionsesService.getAll()
-                console.log('Raw result:', result)
-                console.log('Object keys:', Object.keys(result as any))
-                console.log('result.data:', (result as any)?.data)
-                console.log('result.entities:', (result as any)?.entities)
-
-                // Extract the data array from the result - check common SDK patterns
-                let data: any[] = []
-                if (Array.isArray(result)) {
-                    data = result
-                } else if (Array.isArray((result as any)?.value)) {
-                    data = (result as any).value
-                } else if (Array.isArray((result as any)?.records)) {
-                    data = (result as any).records
-                } else if (Array.isArray((result as any)?.data)) {
-                    data = (result as any).data
-                } else if (Array.isArray((result as any)?.entities)) {
-                    data = (result as any).entities
-                } else if ((result as any)?.isSuccess && Array.isArray((result as any)?.result)) {
-                    data = (result as any).result
-                }
-
-                console.log('Extracted data array length:', data.length)
-                if (data.length > 0) {
-                    console.log('First item:', data[0])
-                    console.log('First item keys:', Object.keys(data[0]))
-                }
+                const result = await Cr552_m365communitydayssessionsesService.getAll() as { data: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses[] }
+                let data: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses[] = result.data
 
                 // Map service data to Session interface
                 const mappedSessions: Session[] = data.map(
-                    (item: any, index: number) => ({
-                        id: item.cr552_m365communitydayssessionsid || `session-${index}`,
+                    (item: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses, index: number) => ({
+                        id: `session-${index}`,
                         title: item.cr552_title || '',
                         speaker: item.cr552_speaker || '',
                         description: item.cr552_description || '',
