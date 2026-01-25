@@ -1,5 +1,7 @@
 # M365 Community Days DC 2026 Event Website
 
+# Heads up, this repo is HEAVILY vibe coded, the intent of this repo is simply to demonstrate Power Apps Code Apps (Cut me some slack :D)
+
 A modern event website built with **Vite** and **React 18** for M365 Community Days DC 2026 (January 29-30). Features event details, session listings with live filtering, sponsor information, and countdown timer.
 
 ## 📌 Main Branch Status
