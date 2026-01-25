@@ -2,6 +2,16 @@
 
 A modern event website built with **Vite** and **React 18** for M365 Community Days DC 2026 (January 29-30). Features event details, session listings with live filtering, sponsor information, and countdown timer.
 
+## 📌 Main Branch Status
+
+**The main branch represents the completed M365 Community Days DC demonstration.** At this stage, the project has been migrated from using SharePoint as the data source to using **Dataverse**, and has been updated to deploy within **Power Apps** using the Power SDK CLI.
+
+Key changes in this final state:
+- ✅ Data source migrated from SharePoint REST API to Dataverse
+- ✅ Power SDK CLI integration for Power Apps deployment
+- ✅ Generated Models and Services from Dataverse tables
+- ✅ Ready for `pac code push` deployment to Power Apps
+
 ## 🎯 Project Overview
 
 This is a client-side React SPA with the following characteristics:
