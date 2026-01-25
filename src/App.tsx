@@ -4,6 +4,7 @@ import { HeroImage } from '@/components/HeroImage'
 import { Hero } from '@/components/Hero'
 import { SessionsList } from '@/components/SessionsList'
 import { Details } from '@/components/Details'
+import { Speakers } from '@/components/Speakers'
 import { Sponsors } from '@/components/Sponsors'
 import { Footer } from '@/components/Footer'
 import styles from './App.module.css'
@@ -16,6 +17,7 @@ function App() {
             <Hero />
             <SessionsList />
             <Details />
+            <Speakers />
             <Sponsors />
             <Footer />
         </div>
