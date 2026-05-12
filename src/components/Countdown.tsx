@@ -60,7 +60,7 @@ export const Countdown: React.FC = () => {
         setMounted(true);
 
         const calculateTimeLeft = () => {
-            const targetDate = new Date('2026-02-03T09:00:00').getTime();
+            const targetDate = new Date('2026-05-18T09:00:00').getTime();
             const now = new Date().getTime();
             const difference = targetDate - now;
 

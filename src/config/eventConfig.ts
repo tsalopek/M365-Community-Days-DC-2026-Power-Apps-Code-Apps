@@ -2,12 +2,12 @@
 export const eventConfig = {
     event: {
         name: "M365 Community Days DC 2026",
-        tagline: "Microsoft DC Community: Discover, Connect, Thrive",
+        tagline: "An Andworx Functional Demo",
         dates: {
-            start: "2026-01-29",
-            end: "2026-01-30",
-            displayStart: "Thu, 29 Jan 2026, 9:00 AM",
-            displayEnd: "Fri, 30 Jan 2026, 5:00 PM",
+            start: "2026-05-18",
+            end: "2026-05-19",
+            displayStart: "Mon, 18 May 2026, 9:00 AM",
+            displayEnd: "Tue, 19 May 2026, 5:00 PM",
             doorsOpen: "8:30 AM",
             sessionsStart: "9:00 AM",
             sessionsEnd: "5:00 PM"
@@ -29,7 +29,7 @@ export const eventConfig = {
         ticketPrice: 20,
         ticketCurrency: "USD",
         registrationUrl: "https://aka.ms/m365dc/ticket",
-        registrationDeadline: "2026-01-30",
+        registrationDeadline: "2026-05-19",
         charityPartner: {
             name: "Computer CORE",
             url: "https://www.computercore.org/",
