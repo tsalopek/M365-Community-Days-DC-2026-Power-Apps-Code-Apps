@@ -12,7 +12,7 @@ This guide contains all necessary steps to transform the existing web app which 
 ## Step 1: Authenticate with Power Platform
 
 ```bash
-pac auth create --environment <environment ID>
+pac auth create --environment <environment ID> --cloud UsGovHigh
 ```
 
 This establishes authentication with the target Power Apps environment.
