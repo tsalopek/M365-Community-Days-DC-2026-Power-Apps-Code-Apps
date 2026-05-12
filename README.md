@@ -174,7 +174,9 @@ All `VITE_*` variables in `.env.local` are available at runtime.
 - **Build Tool**: Vite (Rollup-based)
 - **Package Manager**: npm
 
-## 📝 Migration from Next.js
+## ⚠️ Known Issues
+
+- **Power Apps Code Apps Init and Push Issue**: There is a known issue with `pac code init` and `pac code push` commands. For details and updates, see [GitHub Issue #331](https://github.com/microsoft/PowerAppsCodeApps/issues/331).
 
 If updating from the Next.js version:
 

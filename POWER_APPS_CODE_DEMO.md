@@ -9,27 +9,7 @@ This guide contains all necessary steps to transform the existing web app which 
 
 ---
 
-## Step 1: Authenticate with Power Platform
-
-```bash
-pac auth create --environment <environment ID> --cloud UsGovHigh
-```
-
-This establishes authentication with the target Power Apps environment.
-
----
-
-## Step 2: Initialize Power Apps Code Project
-
-```bash
-pac code init --displayName "Name of the Application"
-```
-
-This creates the Power Apps Code configuration and sets up the project structure.
-
----
-
-## Step 3: Update Package Dependencies
+## Step 1: Update Package Dependencies
 
 Add the following dev dependencies to `package.json`:
 
@@ -41,6 +21,26 @@ Add the following dev dependencies to `package.json`:
   }
 }
 ```
+
+---
+
+## Step 2: Authenticate with Power Platform
+
+```bash
+pac auth create --environment <environment ID> --cloud UsGovHigh
+```
+
+This establishes authentication with the target Power Apps environment.
+
+---
+
+## Step 3: Initialize Power Apps Code Project
+
+```bash
+pac code init --displayName "Name of the Application"
+```
+
+This creates the Power Apps Code configuration and sets up the project structure.
 
 ---
 
@@ -256,6 +256,8 @@ The application now fetches sessions directly from Dataverse instead of SharePoi
 ---
 
 ## Troubleshooting
+
+**Known Issue with Init and Push**: There is a known issue with `pac code init` and `pac code push` commands. For details and updates, see [GitHub Issue #331](https://github.com/microsoft/PowerAppsCodeApps/issues/331).
 
 **Build errors after adding data source:**
 - Ensure `src/generated/` folder exists and contains models
