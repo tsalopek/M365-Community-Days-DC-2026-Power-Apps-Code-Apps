@@ -22,6 +22,10 @@ Add the following dev dependencies to `package.json`:
 }
 ```
 
+```bash
+npm install
+```
+
 ---
 
 ## Step 2: Authenticate with Power Platform
