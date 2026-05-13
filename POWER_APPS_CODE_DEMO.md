@@ -32,6 +32,16 @@ Add the following dependencies to `package.json`:
 }
 ```
 
+Update the `scripts` section in `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev": "concurrently \"vite\" \"pac code run\""
+  }
+}
+```
+
 ```bash
 npm install
 ```
@@ -72,38 +82,23 @@ npx power-apps init --cloud gcchigh -e <environment ID> --display-name "Name of 
 
 ---
 
-## Step 4: Update NPM Scripts
+## Step 4: Update Vite Config
 
-Update the `scripts` section in `package.json`:
-
-```json
-{
-  "scripts": {
-    "dev": "concurrently \"vite\" \"pac code run\""
-  }
-}
-```
-
-This allows running both Vite dev server and Power Apps Code SDK simultaneously.
-
----
-
-## Step 5: Update Vite Config
+Add the import for the power-apps-vite plugin to the `vite.config.ts`:
 
 ```tsx
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import { powerApps } from "@microsoft/power-apps-vite/plugin"
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), powerApps()],
-});
 
+```
+
+Update the config to include the plugin:
+```tsx
+  plugins: [react(), powerApps()],
 ```
 
 ---
 
-## Step 6: Install Dependencies
+## Step 5: Install Dependencies
 
 ```bash
 npm install
@@ -111,7 +106,7 @@ npm install
 
 ---
 
-## Step 7: Review Power Apps Configuration
+## Step 6: Review Power Apps Configuration
 
 Examine the generated `power.config.json` file to understand:
 - App ID and display name
@@ -121,7 +116,7 @@ Examine the generated `power.config.json` file to understand:
 
 ---
 
-## Step 8: Build the Application
+## Step 7: Build the Application
 
 ```bash
 npm run build
@@ -131,7 +126,7 @@ This creates an optimized production build in the `dist/` folder with relative a
 
 ---
 
-## Step 9: Push to Power Apps
+## Step 8: Push to Power Apps
 
 ```bash
 pac code push
@@ -141,28 +136,28 @@ This uploads the built application to the Power Apps environment. The CLI will p
 
 ---
 
-## Step 10: Inspect Dataverse Table
+## Step 9: Inspect Dataverse Table
 
-Navigate to the Dataverse environment and examine the `cr552_m365communitydayssessions` table to understand:
+Navigate to the Dataverse environment and examine the `cra20_m365communitydayssessions` table to understand:
 - Available columns (title, speaker, description, timeSlot, room, track)
 - Existing session records
 - Field naming conventions (cr552_ prefix)
 
 ---
 
-## Step 11: Generate Data Source Types
+## Step 10: Generate Data Source Types
 
 ```bash
-pac code add-data-source -a dataverse -t cr552_m365communitydayssessions
+pac code add-data-source -a dataverse -t cra20_m365communitydayssessions
 ```
 
 This generates TypeScript types and services in `src/generated/` for:
-- `Cr552_m365communitydayssessionsesModel` (interface definitions)
-- `Cr552_m365communitydayssessionsesService` (data access service)
+- `Cra20_m365communitydayssessionsesModel` (interface definitions)
+- `Cra20_m365communitydayssessionsesService` (data access service)
 
 ---
 
-## Step 12: Review Generated Code
+## Step 11: Review Generated Code
 
 Examine the `src/generated/` folder to see:
 - Model definitions with strongly-typed properties
@@ -171,18 +166,18 @@ Examine the `src/generated/` folder to see:
 
 ---
 
-## Step 13: Update SessionsList Component
+## Step 12: Update SessionsList Component
 
 Remove authentication requirements and switch to Dataverse data source:
 
-### 13a: Remove MSAL Authentication
+### 12a: Remove MSAL Authentication
 Delete these files:
 - `src/services/msal.ts`
 - `src/hooks/useAuth.ts`
 
 ### 13b: Update SessionsList.tsx Imports
 ```tsx
-import { Cr552_m365communitydayssessionsesModel, Cr552_m365communitydayssessionsesService } from '@/generated'
+import { Cra20_m365communitydayssessionsesModel, Cra20_m365communitydayssessionsesService } from '@/generated'
 ```
 
 Remove:
@@ -190,7 +185,7 @@ Remove:
 import { useAuth } from '@/hooks/useAuth'
 ```
 
-### 13c: Remove useAuth Hook Usage
+### 12c: Remove useAuth Hook Usage
 Delete these lines:
 ```tsx
 const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
@@ -198,7 +193,7 @@ const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
 
 Remove authentication UI (sign-in button, sign-out button, auth checks).
 
-### 13d: Update useEffect to Fetch from Dataverse
+### 12d: Update useEffect to Fetch from Dataverse
 Replace the fetch logic with:
 
 ```tsx
@@ -208,21 +203,21 @@ useEffect(() => {
             setLoading(true)
             setError(null)
 
-            const result = await Cr552_m365communitydayssessionsesService.getAll() as { 
-                data: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses[] 
+            const result = await Cra20_m365communitydayssessionsesService.getAll() as { 
+                data: Cra20_m365communitydayssessionsesModel.Cra20_m365communitydayssessionses[] 
             }
             
-            const data: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses[] = result.data
+            const data: Cra20_m365communitydayssessionsesModel.Cra20_m365communitydayssessionses[] = result.data
 
             const mappedSessions: Session[] = data.map(
-                (item: Cr552_m365communitydayssessionsesModel.Cr552_m365communitydayssessionses, index: number) => ({
+                (item: Cra20_m365communitydayssessionsesModel.Cra20_m365communitydayssessionses, index: number) => ({
                     id: index,
-                    title: item.cr552_title || '',
-                    speaker: item.cr552_speaker || '',
-                    description: item.cr552_description || '',
-                    timeSlot: item.cr552_timeslot || '',
-                    room: item.cr552_room || '',
-                    track: item.cr552_track || 'Unassigned',
+                    title: item.cra20_title || '',
+                    speaker: item.cra20_speaker || '',
+                    description: item.cra20_description || '',
+                    timeSlot: item.cra20_timeslot || '',
+                    room: item.cra20_room || '',
+                    track: item.cra20_track || 'Unassigned',
                 })
             )
 
@@ -240,7 +235,7 @@ useEffect(() => {
 }, [])
 ```
 
-### 13e: Simplify JSX Rendering
+### 12e: Simplify JSX Rendering
 Remove authentication checks. The component should render directly without auth UI:
 
 ```tsx
@@ -269,7 +264,7 @@ return (
 
 ---
 
-## Step 14: Rebuild and Deploy
+## Step 13: Rebuild and Deploy
 
 ```bash
 npm run build
