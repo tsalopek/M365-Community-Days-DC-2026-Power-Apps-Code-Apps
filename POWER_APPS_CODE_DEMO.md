@@ -56,7 +56,15 @@ pac code init --displayName "Name of the Application" --cloud gcchigh --environm
 
 This creates the Power Apps Code configuration and sets up the project structure.
 
-There is currently a known issue in GCC High requiring that you use the following command instead:
+There is currently a known issue in GCC High requiring that you make an edit to the `node_modules\@microsoft\power-apps-cli\dist\Verbs\Init.js` file and then use the following command instead:
+
+```tsx
+// if (!environmentExists) {
+//     throw new Error(`Environment '${environmentId}' not found. Please verify the environment ID and ensure you have access to it.`);
+// }
+```
+
+Run the following command:
 
 ```bash
 npx power-apps init --cloud gcchigh -e <environment ID> --display-name "Name of the Application"
