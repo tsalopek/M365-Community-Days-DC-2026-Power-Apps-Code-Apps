@@ -1,6 +1,6 @@
 # M365 Community Days DC 2026 - Power Apps Code App Demo Steps
 
-This guide contains all necessary steps to transform the existing web app which uses SharePoint REST APIs  into a Power Apps Code App which uses Dataverse during the live demonstration.
+This guide contains all necessary steps to transform the existing web app which uses SharePoint REST APIs into a Power Apps Code App that uses Dataverse during the live demonstration.
 
 ## Prerequisites
 - Power Apps CLI (`pac`) installed
@@ -9,38 +9,26 @@ This guide contains all necessary steps to transform the existing web app which 
 
 ---
 
-## Step 1: Update Package Dependencies
+## Step 1: Update package dependencies and scripts
 
-Add the following dev dependencies to `package.json`:
-
-```json
-{
-  "devDependencies": {
-    "concurrently": "^9.2.0",
-    "@microsoft/power-apps": "^1.0.3"
-  }
-}
-```
-
-Add the following dependencies to `package.json`:
+Open `package.json` and add or merge the following entries:
 
 ```json
 {
   "dependencies": {
-    "@microsoft/power-apps-vite": "^1.0.2",
-  }
-}
-```
-
-Update the `scripts` section in `package.json`:
-
-```json
-{
+    "@microsoft/power-apps-vite": "^1.0.2"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "@microsoft/power-apps": "^1.0.3"
+  },
   "scripts": {
     "dev": "concurrently \"vite\" \"pac code run\""
   }
 }
 ```
+
+Then install the updated dependencies:
 
 ```bash
 npm install
@@ -54,19 +42,19 @@ npm install
 pac auth create --environment <environment ID> --cloud UsGovHigh
 ```
 
-This establishes authentication with the target Power Apps environment.
+This establishes authentication with the target Power Apps environment. Substitute a different cloud if your environment is not GCC High.
 
 ---
 
-## Step 3: Initialize Power Apps Code Project
+## Step 3: Initialize the Power Apps Code project
 
 ```bash
 pac code init --displayName "Name of the Application" --cloud gcchigh --environment <environment ID>
 ```
 
-This creates the Power Apps Code configuration and sets up the project structure.
+This creates the Power Apps Code configuration and project metadata.
 
-There is currently a known issue in GCC High requiring that you make an edit to the `node_modules\@microsoft\power-apps-cli\dist\Verbs\Init.js` file and then use the following command instead:
+If the CLI fails in GCC High, comment out the environment validation in `node_modules/@microsoft/power-apps-cli/dist/Verbs/Init.js`:
 
 ```tsx
 // if (!environmentExists) {
@@ -74,7 +62,7 @@ There is currently a known issue in GCC High requiring that you make an edit to 
 // }
 ```
 
-Run the following command:
+Then retry with the workaround command:
 
 ```bash
 npx power-apps init --cloud gcchigh -e <environment ID> --display-name "Name of the Application"
@@ -82,23 +70,26 @@ npx power-apps init --cloud gcchigh -e <environment ID> --display-name "Name of 
 
 ---
 
-## Step 4: Update Vite Config
+## Step 4: Update Vite config
 
-Add the import for the power-apps-vite plugin to the `vite.config.ts`:
+Update `vite.config.ts` to use the Power Apps Vite plugin and ensure relative asset paths.
 
-```tsx
-import { powerApps } from "@microsoft/power-apps-vite/plugin"
+```ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { powerApps } from '@microsoft/power-apps-vite/plugin'
 
-```
-
-Update the config to include the plugin:
-```tsx
+export default defineConfig({
   plugins: [react(), powerApps()],
+  base: './',
+})
 ```
 
 ---
 
-## Step 5: Install Dependencies
+## Step 5: Install dependencies again
+
+If you already ran `npm install` in Step 1, you can skip this step unless you updated `package.json` again.
 
 ```bash
 npm install
@@ -175,7 +166,7 @@ Delete these files:
 - `src/services/msal.ts`
 - `src/hooks/useAuth.ts`
 
-### 13b: Update SessionsList.tsx Imports
+### 12b: Update SessionsList.tsx imports
 ```tsx
 import { Cra20_m365communitydayssessionsesModel, Cra20_m365communitydayssessionsesService } from '@/generated'
 ```
@@ -185,7 +176,7 @@ Remove:
 import { useAuth } from '@/hooks/useAuth'
 ```
 
-### 12c: Remove useAuth Hook Usage
+### 12c: Remove useAuth hook usage
 Delete these lines:
 ```tsx
 const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
@@ -313,17 +304,11 @@ The application now fetches sessions directly from Dataverse instead of SharePoi
 
 ---
 
-## Demo Narrative Flow
-
-1. **Start**: Show the current website connecting to SharePoint
-2. **Authentication**: Run `pac auth create` to establish Power Platform connection
-3. **Initialization**: Run `pac code init` to prepare Power Apps infrastructure
-4. **Configuration**: Review `power.config.json` and explain Power Apps Code structure
-5. **Data Integration**: Run `pac code add-data-source` to generate Dataverse types
-6. **Code Update**: Update SessionsList to use generated Dataverse service
-7. **Build & Deploy**: Run build and push to show automated deployment
-8. **Result**: Show application now pulling live Dataverse data in Power Apps environment
+**Total Demo Time**: ~20-25 minutes (excluding detailed code explanations)
 
 ---
 
-**Total Demo Time**: ~20-25 minutes (excluding detailed code explanations)
+## Resources
+
+- [Power Apps code apps overview](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/overview)
+- [Your first code app](https://github.com/microsoft/SLG-Business-Applications/blob/main/white-papers/your-first-code-app.md)
