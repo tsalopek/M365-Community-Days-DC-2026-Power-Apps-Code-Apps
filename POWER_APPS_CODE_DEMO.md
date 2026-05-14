@@ -87,17 +87,7 @@ export default defineConfig({
 
 ---
 
-## Step 5: Install dependencies again
-
-If you already ran `npm install` in Step 1, you can skip this step unless you updated `package.json` again.
-
-```bash
-npm install
-```
-
----
-
-## Step 6: Review Power Apps Configuration
+## Step 5: Review Power Apps Configuration
 
 Examine the generated `power.config.json` file to understand:
 - App ID and display name
@@ -107,7 +97,7 @@ Examine the generated `power.config.json` file to understand:
 
 ---
 
-## Step 7: Build the Application
+## Step 6: Build the Application
 
 ```bash
 npm run build
@@ -117,7 +107,7 @@ This creates an optimized production build in the `dist/` folder with relative a
 
 ---
 
-## Step 8: Push to Power Apps
+## Step 7: Push to Power Apps
 
 ```bash
 pac code push
@@ -127,7 +117,7 @@ This uploads the built application to the Power Apps environment. The CLI will p
 
 ---
 
-## Step 9: Inspect Dataverse Table
+## Step 8: Inspect Dataverse Table
 
 Navigate to the Dataverse environment and examine the `cra20_m365communitydayssessions` table to understand:
 - Available columns (title, speaker, description, timeSlot, room, track)
@@ -136,7 +126,7 @@ Navigate to the Dataverse environment and examine the `cra20_m365communitydaysse
 
 ---
 
-## Step 10: Generate Data Source Types
+## Step 9: Generate Data Source Types
 
 ```bash
 pac code add-data-source -a dataverse -t cra20_m365communitydayssessions
@@ -148,7 +138,7 @@ This generates TypeScript types and services in `src/generated/` for:
 
 ---
 
-## Step 11: Review Generated Code
+## Step 10: Review Generated Code
 
 Examine the `src/generated/` folder to see:
 - Model definitions with strongly-typed properties
@@ -157,16 +147,16 @@ Examine the `src/generated/` folder to see:
 
 ---
 
-## Step 12: Update SessionsList Component
+## Step 11: Update SessionsList Component
 
 Remove authentication requirements and switch to Dataverse data source:
 
-### 12a: Remove MSAL Authentication
+### 11a: Remove MSAL Authentication
 Delete these files:
 - `src/services/msal.ts`
 - `src/hooks/useAuth.ts`
 
-### 12b: Update SessionsList.tsx imports
+### 11b: Update SessionsList.tsx imports
 ```tsx
 import { Cra20_m365communitydayssessionsesModel, Cra20_m365communitydayssessionsesService } from '@/generated'
 ```
@@ -176,7 +166,7 @@ Remove:
 import { useAuth } from '@/hooks/useAuth'
 ```
 
-### 12c: Remove useAuth hook usage
+### 11c: Remove useAuth hook usage
 Delete these lines:
 ```tsx
 const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
@@ -184,7 +174,7 @@ const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
 
 Remove authentication UI (sign-in button, sign-out button, auth checks).
 
-### 12d: Update useEffect to Fetch from Dataverse
+### 11d: Update useEffect to Fetch from Dataverse
 Replace the fetch logic with:
 
 ```tsx
@@ -226,7 +216,7 @@ useEffect(() => {
 }, [])
 ```
 
-### 12e: Simplify JSX Rendering
+### 11e: Simplify JSX Rendering
 Remove authentication checks. The component should render directly without auth UI:
 
 ```tsx
@@ -255,7 +245,7 @@ return (
 
 ---
 
-## Step 13: Rebuild and Deploy
+## Step 12: Rebuild and Deploy
 
 ```bash
 npm run build
