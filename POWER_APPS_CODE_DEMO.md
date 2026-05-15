@@ -6,21 +6,32 @@ This guide contains all necessary steps to transform the existing web app which 
 - Power Apps CLI (`pac`) installed
 - Active Power Apps environment
 - Node.js 16+ installed
+- Admin access to Power Platform admin center
 
 ---
 
-## Step 1: Update package dependencies and scripts
+## Step 1: Enable Power Apps Code Apps in your environment
+
+1. As an admin, navigate to the [Power Platform admin center](https://admin.powerplatform.microsoft.com)
+2. Select **Manage** > **Environments** > select the environment where you want to use code apps
+3. Select **Settings** > expand the **Product** subsection > select **Features**
+4. Locate **Power Apps code apps** and toggle **Enable code apps** to **On**
+5. Select **Save** to apply the changes
+
+This feature must be enabled before you can initialize or deploy Power Apps code apps.
+
+---
+
+## Step 2: Update package dependencies and scripts
 
 Open `package.json` and add or merge the following entries:
 
 ```json
 {
-  "dependencies": {
-    "@microsoft/power-apps-vite": "^1.0.2"
-  },
   "devDependencies": {
     "concurrently": "^9.2.0",
-    "@microsoft/power-apps": "^1.0.3"
+    "@microsoft/power-apps": "^1.0.3",
+    "@microsoft/power-apps-vite": "^1.0.2"
   },
   "scripts": {
     "dev": "concurrently \"vite\" \"pac code run\""
@@ -36,7 +47,7 @@ npm install
 
 ---
 
-## Step 2: Authenticate with Power Platform
+## Step 3: Authenticate with Power Platform
 
 ```bash
 pac auth create --environment <environment ID> --cloud UsGovHigh
@@ -46,7 +57,7 @@ This establishes authentication with the target Power Apps environment. Substitu
 
 ---
 
-## Step 3: Initialize the Power Apps Code project
+## Step 4: Initialize the Power Apps Code project
 
 ```bash
 pac code init --displayName "Name of the Application" --cloud gcchigh --environment <environment ID>
@@ -70,7 +81,17 @@ npx power-apps init --cloud gcchigh -e <environment ID> --display-name "Name of 
 
 ---
 
-## Step 4: Update Vite config
+## Step 5: Review Power Apps Configuration
+
+Examine the generated `power.config.json` file to understand:
+- App ID and display name
+- Build path (should be `./dist`)
+- Build entry point (should be `index.html`)
+- Environment and region settings
+
+---
+
+## Step 6: Update Vite config
 
 Update `vite.config.ts` to use the Power Apps Vite plugin and ensure relative asset paths.
 
@@ -87,17 +108,7 @@ export default defineConfig({
 
 ---
 
-## Step 5: Review Power Apps Configuration
-
-Examine the generated `power.config.json` file to understand:
-- App ID and display name
-- Build path (should be `./dist`)
-- Build entry point (should be `index.html`)
-- Environment and region settings
-
----
-
-## Step 6: Build the Application
+## Step 7: Build the Application
 
 ```bash
 npm run build
@@ -107,7 +118,7 @@ This creates an optimized production build in the `dist/` folder with relative a
 
 ---
 
-## Step 7: Push to Power Apps
+## Step 8: Push to Power Apps
 
 ```bash
 pac code push
@@ -117,16 +128,16 @@ This uploads the built application to the Power Apps environment. The CLI will p
 
 ---
 
-## Step 8: Inspect Dataverse Table
+## Step 9: Inspect Dataverse Table
 
 Navigate to the Dataverse environment and examine the `cra20_m365communitydayssessions` table to understand:
 - Available columns (title, speaker, description, timeSlot, room, track)
 - Existing session records
-- Field naming conventions (cr552_ prefix)
+- Field naming conventions (cra20_ prefix)
 
 ---
 
-## Step 9: Generate Data Source Types
+## Step 10: Generate Data Source Types
 
 ```bash
 pac code add-data-source -a dataverse -t cra20_m365communitydayssessions
@@ -138,7 +149,7 @@ This generates TypeScript types and services in `src/generated/` for:
 
 ---
 
-## Step 10: Review Generated Code
+## Step 11: Review Generated Code
 
 Examine the `src/generated/` folder to see:
 - Model definitions with strongly-typed properties
@@ -147,16 +158,16 @@ Examine the `src/generated/` folder to see:
 
 ---
 
-## Step 11: Update SessionsList Component
+## Step 12: Update SessionsList Component
 
 Remove authentication requirements and switch to Dataverse data source:
 
-### 11a: Remove MSAL Authentication
+### 12a: Remove MSAL Authentication
 Delete these files:
 - `src/services/msal.ts`
 - `src/hooks/useAuth.ts`
 
-### 11b: Update SessionsList.tsx imports
+### 12b: Update SessionsList.tsx imports
 ```tsx
 import { Cra20_m365communitydayssessionsesModel, Cra20_m365communitydayssessionsesService } from '@/generated'
 ```
@@ -166,7 +177,7 @@ Remove:
 import { useAuth } from '@/hooks/useAuth'
 ```
 
-### 11c: Remove useAuth hook usage
+### 12c: Remove useAuth hook usage
 Delete these lines:
 ```tsx
 const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
@@ -174,7 +185,7 @@ const { isAuthenticated, isLoading: authLoading, login, logout } = useAuth()
 
 Remove authentication UI (sign-in button, sign-out button, auth checks).
 
-### 11d: Update useEffect to Fetch from Dataverse
+### 12d: Update useEffect to Fetch from Dataverse
 Replace the fetch logic with:
 
 ```tsx
@@ -216,7 +227,7 @@ useEffect(() => {
 }, [])
 ```
 
-### 11e: Simplify JSX Rendering
+### 12e: Simplify JSX Rendering
 Remove authentication checks. The component should render directly without auth UI:
 
 ```tsx
@@ -245,7 +256,7 @@ return (
 
 ---
 
-## Step 12: Rebuild and Deploy
+## Step 13: Rebuild and Deploy
 
 ```bash
 npm run build
@@ -258,6 +269,7 @@ The application now fetches sessions directly from Dataverse instead of SharePoi
 
 ## Verification Checklist
 
+- [ ] Power Apps Code Apps feature enabled in environment settings
 - [ ] Authentication successful with Power Platform
 - [ ] Power Apps Code project initialized
 - [ ] Dependencies installed (concurrently, @microsoft/power-apps)
